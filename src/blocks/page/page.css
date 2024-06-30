@@ -1,0 +1,29 @@
+.page {
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 320px;
+}
+
+@media (min-width: 768px) {
+    .page {
+        max-width: 768px;
+        padding: 0 19px 0;
+    }
+}
+
+@media (min-width: 1024px) {
+    .page {
+        max-width: 1024px;
+    }
+}
+
+@media (min-width: 1280px) {
+    .page {
+        padding: 0 200px 0;
+        max-width: 1280px;
+    }
+}

@@ -1,0 +1,10 @@
+.elements {
+    margin: 0;
+    padding: 36px 0 0;
+}
+
+@media (min-width: 1280px) {
+    .elements {
+        padding: 51px 0 0;
+    }
+}

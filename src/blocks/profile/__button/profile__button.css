@@ -1,0 +1,32 @@
+.profile__button {
+    margin: 33px 0 0;
+    padding: 0;
+    background-image: url(../../../images/plus.svg);
+    background-color: transparent;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 16px;
+    min-width: 282px;
+    min-height: 50px;
+    border: 2px solid #FFFFFF;
+    border-radius: 2px;
+    cursor: pointer;
+}
+
+.profile__button:hover {
+    opacity: 0.6;
+}
+
+@media (min-width: 1024px) {
+    .profile__button {
+        margin: 0 0 0 224px;
+        min-width: 150px;
+        background-size: 22px;
+    }
+}
+
+@media (min-width: 1280px) {
+    .profile__button {
+        margin: 0 0 0 244px;
+    }
+}
