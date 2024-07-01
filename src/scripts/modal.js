@@ -22,10 +22,7 @@ function openPopup(popup) {
     }
   }
   
-  document.querySelectorAll('.popup__close').forEach(button => {
-    const buttonsPopup = button.closest('.popup');
-    button.addEventListener('click', () => closePopup(buttonsPopup));
-  });
+  
   
   export { openPopup, closePopup };
   

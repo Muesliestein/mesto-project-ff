@@ -1,11 +1,14 @@
 // main.js
 
-import { createCard, prependCard, appendCard } from './scripts/cards.js';
+import { createCard } from './scripts/card.js';
 import { openPopup, closePopup } from './scripts/modal.js';
 import { enableValidation } from './scripts/validation.js';
 import './pages/index.css';
 
-
+const elementsList = document.querySelector('.elements__list');
+const imageOpen = document.querySelector('.popup__image');
+const imageCaption = document.querySelector('.popup__description');
+const popupImage = document.getElementById('popup-image');
 
 const popupProfile = document.getElementById('popup-profile');
 const popupCard = document.getElementById('popup-card');
@@ -41,7 +44,7 @@ function submitCardForm(evt) {
     name: inputName.value,
     link: inputLink.value,
   };
-  const newCard = createCard(cardObject);
+  const newCard = createCard(cardObject, handleCardClick);
   prependCard(newCard);
   closePopup(popupCard);
   formElement.reset();
@@ -90,6 +93,26 @@ initialCards.forEach((item) => {
 });
 
 function renderCard(card) {
-  const newCard = createCard(card);
+  const newCard = createCard(card, handleCardClick);
   appendCard(newCard);
-}
+};
+
+function handleCardClick(card) {
+  openPopup(popupImage);
+  imageCaption.textContent = card.name;
+  imageOpen.src = card.link;
+  imageOpen.alt = card.name;
+};
+
+function prependCard(card) {
+  elementsList.prepend(card);
+};
+
+function appendCard(card) {
+  elementsList.append(card);
+};
+
+document.querySelectorAll('.popup__close').forEach(button => {
+  const buttonsPopup = button.closest('.popup');
+  button.addEventListener('click', () => closePopup(buttonsPopup));
+});
