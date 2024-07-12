@@ -51,7 +51,7 @@ function submitCardForm(evt) {
 
   addNewCard(name, link)
     .then((cardData) => {
-      const newCard = createCard(cardData, handleCardClick); // Создание новой карточки
+      const newCard = createCard(cardData, handleCardClick, userId); // Создание новой карточки
       prependCard(newCard); // Добавление карточки в начало списка
       closePopup(popupCard); // Закрытие попапа
       formCard.reset(); // Сброс формы
@@ -93,7 +93,7 @@ Promise.all([getUserInfo(), getInitialCards()])
 
     // Рендеринг карточек
     cardsData.forEach((card) => {
-      const newCard = createCard(card, handleCardClick);
+      const newCard = createCard(card, handleCardClick, userId);
       appendCard(newCard);
     });
   })
@@ -103,7 +103,7 @@ Promise.all([getUserInfo(), getInitialCards()])
 
 // Функция рендеринга карточки
 function renderCard(card) {
-  const newCard = createCard(card, handleCardClick); // Создание карточки
+  const newCard = createCard(card, handleCardClick, userId); // Создание карточки
   appendCard(newCard); // Добавление карточки в конец списка
 }
 

@@ -46,3 +46,24 @@ export const addNewCard = (name, link) => {
     })
   }).then(checkResponse);
 };
+
+export const deleteCardFromServer = (cardId) => {
+  return fetch(`${config.baseUrl}/cards/${cardId}`, {
+    method: 'DELETE',
+    headers: config.headers
+  }).then(checkResponse);
+};
+
+export const addLike = (cardId) => {
+  return fetch(`${config.baseUrl}/cards/likes/${cardId}`, {
+    method: 'PUT',
+    headers: config.headers
+  }).then(checkResponse);
+};
+
+export const removeLike = (cardId) => {
+  return fetch(`${config.baseUrl}/cards/likes/${cardId}`, {
+    method: 'DELETE',
+    headers: config.headers
+  }).then(checkResponse);
+};
