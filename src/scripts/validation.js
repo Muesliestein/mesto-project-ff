@@ -1,111 +1,99 @@
+// validation.js
 
-const showInputError = (errorElement, inputElement, errorMessage, validationConfig) => {
-    // Находим элемент ошибки внутри самой функции
-    console.log(errorElement);
-    // Остальной код такой же
-    if (errorElement && errorMessage) {
-        inputElement.classList.add(validationConfig.inputErrorClass);
-        errorElement.textContent = errorMessage;
-        errorElement.classList.add(validationConfig.errorClass);
-    };
-};
-
-const hideInputError = (errorElement, inputElement, validationConfig) => {
-    // Находим элемент ошибки
-
-    if (errorElement) {
-        inputElement.classList.remove(validationConfig.inputErrorClass);
-        errorElement.classList.remove(validationConfig.errorClass);
-        errorElement.textContent = '';
-    };
-
-
-
-};
-const inputHasErrorClass = (inputElement, errorElement, validationConfig) => {
-    console.log(inputElement.classList.contains(validationConfig.inputErrorClass));
-    console.log(errorElement.classList.contains(validationConfig.errorClass));
-    console.log(validationConfig);
-    return inputElement.classList.contains(validationConfig.inputErrorClass) && errorElement.classList.contains(validationConfig.errorClass);
-}
-
-
-// Функция, которая проверяет валидность поля
-const isValid = (formElement, inputElement, submitButton, validationConfig) => {
-    const errorElement = formElement.querySelector(`#${inputElement.id}-error`);
-    if (!inputElement.validity.valid) {
-        showInputError(errorElement, inputElement, inputElement.validationMessage, validationConfig);
-        submitButton.classList.add(validationConfig.inactiveButtonClass);
-        submitButton.setAttribute('disabled', true); // Добавление атрибута disabled
-        console.log('ERROR');
-        return false;
-    } else if (inputHasErrorClass(inputElement, errorElement, validationConfig)) {
-        hideInputError(errorElement, inputElement, validationConfig);
-        submitButton.removeAttribute('disabled', true); // Удаление атрибута disabled
-        console.log('VALID');
-        return true;
-    } else {
-        console.log('CLEAR');
-        submitButton.setAttribute('disabled', true); // Добавление атрибута disabled
-        return true;
-    }
-};
-
-const validateAllFields = (inputList) => {
-    let formIsValid = true;
-
-    inputList.forEach(input => {
-        if (input.value === '' && input.hasAttribute('required')) {
-            formIsValid = false;
-        };
-    });
-    return formIsValid;
-};
-
-
-// Вызовем функцию isValid на каждый ввод символа
-const setEventListeners = (formElement, validationConfig) => {
-    // Находим все поля внутри формы,
-    // сделаем из них массив методом Array.from
-    const inputList = Array.from(formElement.querySelectorAll(validationConfig.inputSelector));
-    const submitButton = formElement.querySelector(validationConfig.submitButtonSelector);
-    // Обойдём все элементы полученной коллекции
-    inputList.forEach((inputElement) => {
-        // каждому полю добавим обработчик события input
-        inputElement.addEventListener('input', () => {
-            // Внутри колбэка вызовем isValid,
-            // передав ей форму и проверяемый элемент
-            if (
-                isValid(formElement, inputElement, submitButton, validationConfig) && validateAllFields(inputList)) {
-                submitButton.classList.remove(validationConfig.inactiveButtonClass);
-                submitButton.removeAttribute('disabled'); // удаление атрибута disabled
-            }
-        });
-    });
-}
-
-const enableValidation = (validationConfig) => {
-    // Найдём все формы с указанным классом в DOM,
-    // сделаем из них массив методом Array.from
-    const formList = Array.from(document.querySelectorAll(validationConfig.formSelector));
-
-    // Переберём полученную коллекцию
-    formList.forEach((formElement) => {
-        console.log('button', formElement)
-        // Для каждой формы вызовем функцию setEventListeners,
-        // передав ей элемент формы
-        setEventListeners(formElement, validationConfig);
-    });
-};
-
-// Вызовем функцию
-enableValidation({
+const validationConfig = {
     formSelector: '.popup__form',
     inputSelector: '.popup__input',
     submitButtonSelector: '.popup__save',
     inactiveButtonClass: 'popup__save_disabled',
     inputErrorClass: 'popup__input_type_error',
-    errorClass: 'popup__input-error'
-});
-
-export { showInputError, hideInputError, isValid, validateAllFields, setEventListeners, enableValidation };
+    errorClass: 'popup__input-error',
+    // Регулярные выражения для проверки
+    namePattern: /^[a-zA-Zа-яА-ЯёЁ\s-]+$/,
+    urlPattern: /^(https?|chrome):\/\/[^\s$.?#].[^\s]*$/,
+  };
+  
+  const showInputError = (formElement, inputElement, errorMessage, config) => {
+    const errorElement = formElement.querySelector(`#${inputElement.id}-error`);
+    inputElement.classList.add(config.inputErrorClass);
+    errorElement.textContent = errorMessage;
+    errorElement.classList.add(config.errorClass);
+  };
+  
+  const hideInputError = (formElement, inputElement, config) => {
+    const errorElement = formElement.querySelector(`#${inputElement.id}-error`);
+    inputElement.classList.remove(config.inputErrorClass);
+    errorElement.classList.remove(config.errorClass);
+    errorElement.textContent = '';
+  };
+  
+  const isValid = (formElement, inputElement, config) => {
+    if (!inputElement.validity.valid) {
+      if (inputElement.validity.valueMissing) {
+        showInputError(formElement, inputElement, 'Вы пропустили это поле.', config);
+      } else if (inputElement.validity.tooShort || inputElement.validity.tooLong) {
+        showInputError(formElement, inputElement, inputElement.dataset.error, config);
+      } else if (inputElement.validity.patternMismatch) {
+        showInputError(formElement, inputElement, 'Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы.', config);
+      } else if (inputElement.type === 'url' && !config.urlPattern.test(inputElement.value)) {
+        showInputError(formElement, inputElement, 'Введите адрес сайта.', config);
+      } else {
+        showInputError(formElement, inputElement, inputElement.validationMessage, config);
+      }
+    } else if (inputElement.type === 'text' && !config.namePattern.test(inputElement.value)) {
+      showInputError(formElement, inputElement, 'Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы.', config);
+    } else if (inputElement.type === 'url' && !config.urlPattern.test(inputElement.value)) {
+      showInputError(formElement, inputElement, 'Введите адрес сайта.', config);
+    } else {
+      hideInputError(formElement, inputElement, config);
+    }
+  };
+  
+  const setEventListeners = (formElement, config) => {
+    const inputList = Array.from(formElement.querySelectorAll(config.inputSelector));
+    const buttonElement = formElement.querySelector(config.submitButtonSelector);
+    toggleButtonState(inputList, buttonElement, config);
+  
+    inputList.forEach((inputElement) => {
+      inputElement.addEventListener('input', () => {
+        isValid(formElement, inputElement, config);
+        toggleButtonState(inputList, buttonElement, config);
+      });
+    });
+  };
+  
+  const enableValidation = (config) => {
+    const formList = Array.from(document.querySelectorAll(config.formSelector));
+    formList.forEach((formElement) => {
+      setEventListeners(formElement, config);
+    });
+  };
+  
+  const toggleButtonState = (inputList, buttonElement, config) => {
+    if (hasInvalidInput(inputList)) {
+      buttonElement.classList.add(config.inactiveButtonClass);
+      buttonElement.setAttribute('disabled', true);
+    } else {
+      buttonElement.classList.remove(config.inactiveButtonClass);
+      buttonElement.removeAttribute('disabled');
+    }
+  };
+  
+  const hasInvalidInput = (inputList) => {
+    return inputList.some((inputElement) => {
+      return !inputElement.validity.valid || 
+             (inputElement.type === 'text' && !validationConfig.namePattern.test(inputElement.value)) || 
+             (inputElement.type === 'url' && !validationConfig.urlPattern.test(inputElement.value));
+    });
+  };
+  
+  const clearValidation = (formElement, config) => {
+    const inputList = Array.from(formElement.querySelectorAll(config.inputSelector));
+    const buttonElement = formElement.querySelector(config.submitButtonSelector);
+    inputList.forEach((inputElement) => {
+      hideInputError(formElement, inputElement, config);
+    });
+    toggleButtonState(inputList, buttonElement, config);
+  };
+  
+  export { enableValidation, clearValidation, validationConfig };
+  
