@@ -1,5 +1,3 @@
-// validation.js
-
 const validationConfig = {
     formSelector: '.popup__form',
     inputSelector: '.popup__input',
@@ -7,7 +5,6 @@ const validationConfig = {
     inactiveButtonClass: 'popup__save_disabled',
     inputErrorClass: 'popup__input_type_error',
     errorClass: 'popup__input-error',
-    // Регулярные выражения для проверки
     namePattern: /^[a-zA-Zа-яА-ЯёЁ\s-]+$/,
     urlPattern: /^(https?|chrome):\/\/[^\s$.?#].[^\s]*$/,
   };
@@ -48,6 +45,24 @@ const validationConfig = {
     }
   };
   
+  const toggleButtonState = (inputList, buttonElement, config) => {
+    if (hasInvalidInput(inputList)) {
+      buttonElement.classList.add(config.inactiveButtonClass);
+      buttonElement.setAttribute('disabled', true);
+    } else {
+      buttonElement.classList.remove(config.inactiveButtonClass);
+      buttonElement.removeAttribute('disabled');
+    }
+  };
+  
+  const hasInvalidInput = (inputList) => {
+    return inputList.some((inputElement) => {
+      return !inputElement.validity.valid || 
+             (inputElement.type === 'text' && !validationConfig.namePattern.test(inputElement.value)) || 
+             (inputElement.type === 'url' && !validationConfig.urlPattern.test(inputElement.value));
+    });
+  };
+  
   const setEventListeners = (formElement, config) => {
     const inputList = Array.from(formElement.querySelectorAll(config.inputSelector));
     const buttonElement = formElement.querySelector(config.submitButtonSelector);
@@ -65,24 +80,6 @@ const validationConfig = {
     const formList = Array.from(document.querySelectorAll(config.formSelector));
     formList.forEach((formElement) => {
       setEventListeners(formElement, config);
-    });
-  };
-  
-  const toggleButtonState = (inputList, buttonElement, config) => {
-    if (hasInvalidInput(inputList)) {
-      buttonElement.classList.add(config.inactiveButtonClass);
-      buttonElement.setAttribute('disabled', true);
-    } else {
-      buttonElement.classList.remove(config.inactiveButtonClass);
-      buttonElement.removeAttribute('disabled');
-    }
-  };
-  
-  const hasInvalidInput = (inputList) => {
-    return inputList.some((inputElement) => {
-      return !inputElement.validity.valid || 
-             (inputElement.type === 'text' && !validationConfig.namePattern.test(inputElement.value)) || 
-             (inputElement.type === 'url' && !validationConfig.urlPattern.test(inputElement.value));
     });
   };
   
