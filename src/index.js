@@ -1,7 +1,7 @@
 import { createCard } from './scripts/card.js';
 import { openPopup, closePopup } from './scripts/modal.js';
 import { enableValidation, clearValidation, validationConfig } from './scripts/validation.js';
-import { getUserInfo, getInitialCards, updateUserInfo, addNewCard } from './scripts/api.js';
+import { getUserInfo, getInitialCards, updateUserInfo, addNewCard, updateUserAvatar } from './scripts/api.js';
 import './pages/index.css';
 
 // Элементы DOM
@@ -11,20 +11,34 @@ const imageCaption = document.querySelector('.popup__description');
 const popupImage = document.getElementById('popup-image');
 const popupProfile = document.getElementById('popup-profile');
 const popupCard = document.getElementById('popup-card');
+const popupAvatar = document.getElementById('popup-avatar');
 const formProfile = document.getElementById('form_profile');
 const formCard = document.getElementById('form_card');
+const formAvatar = document.getElementById('form_avatar');
 const buttonPopupProfile = document.querySelector('.profile__edit');
 const buttonPopupCard = document.querySelector('.profile__button');
+const buttonPopupAvatar = document.querySelector('.profile__avatar');
 const buttonPopupSave = document.getElementById('buttonSave');
 const nameInput = document.getElementById('title');
 const descriptionInput = document.getElementById('description');
 const inputName = document.getElementById('name');
 const inputLink = document.getElementById('link');
+const avatarLinkInput = document.getElementById('avatar_link');
 const userName = document.querySelector('.profile__title');
 const userJob = document.querySelector('.profile__subtitle');
-const userAvatar = document.querySelector('.profile__avatar');
+const userAvatar = document.querySelector('.profile__image');
 
 let userId; // Переменная для хранения _id пользователя
+
+// Функция для изменения текста кнопки во время загрузки
+function renderLoading(isLoading, formElement, loadingText = 'Сохранение...') {
+  const submitButton = formElement.querySelector('.popup__save');
+  if (isLoading) {
+    submitButton.textContent = loadingText;
+  } else {
+    submitButton.textContent = formElement.id === 'form_card' ? 'Создать' : 'Сохранить';
+  }
+}
 
 // Открытие попапа добавления карточки
 buttonPopupCard.addEventListener('click', () => {
@@ -43,9 +57,17 @@ buttonPopupProfile.addEventListener('click', () => {
   descriptionInput.value = userJob.textContent;
 });
 
+// Открытие попапа изменения аватара
+buttonPopupAvatar.addEventListener('click', () => {
+  formAvatar.reset(); // Сброс формы
+  clearValidation(formAvatar, validationConfig); // Очистка ошибок валидации
+  openPopup(popupAvatar);
+});
+
 // Обработчик отправки формы добавления карточки
 function submitCardForm(evt) {
   evt.preventDefault(); // Предотвращение стандартного поведения формы
+  renderLoading(true, formCard, 'Создание...'); // Показ состояния загрузки
   const name = inputName.value;
   const link = inputLink.value;
 
@@ -58,6 +80,9 @@ function submitCardForm(evt) {
     })
     .catch((err) => {
       console.error(`Ошибка: ${err}`);
+    })
+    .finally(() => {
+      renderLoading(false, formCard); // Убрать состояние загрузки
     });
 }
 
@@ -66,6 +91,7 @@ formCard.addEventListener('submit', submitCardForm); // Добавление о�
 // Обработчик отправки формы редактирования профиля
 function submitFormProfile(evt) {
   evt.preventDefault(); // Предотвращение стандартного поведения формы
+  renderLoading(true, formProfile); // Показ состояния загрузки
   const name = nameInput.value;
   const about = descriptionInput.value;
 
@@ -77,10 +103,35 @@ function submitFormProfile(evt) {
     })
     .catch((err) => {
       console.error(`Ошибка: ${err}`);
+    })
+    .finally(() => {
+      renderLoading(false, formProfile); // Убрать состояние загрузки
     });
 }
 
 formProfile.addEventListener('submit', submitFormProfile); // Добавление обработчика отправки формы
+
+// Обработчик отправки формы изменения аватара
+function submitFormAvatar(evt) {
+  evt.preventDefault(); // Предотвращение стандартного поведения формы
+  renderLoading(true, formAvatar); // Показ состояния загрузки
+  const avatarLink = avatarLinkInput.value;
+
+  updateUserAvatar(avatarLink)
+    .then((userData) => {
+      userAvatar.src = userData.avatar; // Обновление аватара пользователя
+      closePopup(popupAvatar); // Закрытие попапа
+      formAvatar.reset(); // Сброс формы
+    })
+    .catch((err) => {
+      console.error(`Ошибка: ${err}`);
+    })
+    .finally(() => {
+      renderLoading(false, formAvatar); // Убрать состояние загрузки
+    });
+}
+
+formAvatar.addEventListener('submit', submitFormAvatar); // Добавление обработчика отправки формы
 
 // Загрузка информации о пользователе и карточек с сервера
 Promise.all([getUserInfo(), getInitialCards()])

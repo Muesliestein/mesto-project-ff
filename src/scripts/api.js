@@ -6,6 +6,7 @@ const config = {
   }
 };
 
+// Функция для проверки ответа сервера
 const checkResponse = (res) => {
   if (res.ok) {
     return res.json();
@@ -13,18 +14,21 @@ const checkResponse = (res) => {
   return Promise.reject(`Ошибка: ${res.status}`);
 };
 
+// Получение информации о пользователе
 export const getUserInfo = () => {
   return fetch(`${config.baseUrl}/users/me`, {
     headers: config.headers
   }).then(checkResponse);
 };
 
+// Получение начальных карточек
 export const getInitialCards = () => {
   return fetch(`${config.baseUrl}/cards`, {
     headers: config.headers
   }).then(checkResponse);
 };
 
+// Обновление информации о пользователе
 export const updateUserInfo = (name, about) => {
   return fetch(`${config.baseUrl}/users/me`, {
     method: 'PATCH',
@@ -36,6 +40,7 @@ export const updateUserInfo = (name, about) => {
   }).then(checkResponse);
 };
 
+// Добавление новой карточки
 export const addNewCard = (name, link) => {
   return fetch(`${config.baseUrl}/cards`, {
     method: 'POST',
@@ -47,6 +52,7 @@ export const addNewCard = (name, link) => {
   }).then(checkResponse);
 };
 
+// Удаление карточки с сервера
 export const deleteCardFromServer = (cardId) => {
   return fetch(`${config.baseUrl}/cards/${cardId}`, {
     method: 'DELETE',
@@ -54,6 +60,7 @@ export const deleteCardFromServer = (cardId) => {
   }).then(checkResponse);
 };
 
+// Добавление лайка карточке
 export const addLike = (cardId) => {
   return fetch(`${config.baseUrl}/cards/likes/${cardId}`, {
     method: 'PUT',
@@ -61,9 +68,21 @@ export const addLike = (cardId) => {
   }).then(checkResponse);
 };
 
+// Удаление лайка с карточки
 export const removeLike = (cardId) => {
   return fetch(`${config.baseUrl}/cards/likes/${cardId}`, {
     method: 'DELETE',
     headers: config.headers
+  }).then(checkResponse);
+};
+
+// Обновление аватара пользователя
+export const updateUserAvatar = (avatarUrl) => {
+  return fetch(`${config.baseUrl}/users/me/avatar`, {
+    method: 'PATCH',
+    headers: config.headers,
+    body: JSON.stringify({
+      avatar: avatarUrl
+    })
   }).then(checkResponse);
 };

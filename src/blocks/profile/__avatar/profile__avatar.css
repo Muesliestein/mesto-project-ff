@@ -1,6 +1,10 @@
 .profile__avatar {
+    background-color: #000;
+    background-position: 50%;
+    background-repeat: no-repeat;
+    background-image: url(../../../images/change.svg);
     border-radius: 50%;
-    object-fit: cover;
-    max-width: 120px;
-    max-height: 120px;
+    height: 120px;
+    width: 120px;
+    transition: opacity 1s ease-in-out;
 }

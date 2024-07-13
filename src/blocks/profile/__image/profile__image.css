@@ -1,0 +1,11 @@
+.profile__image {
+    border-radius: inherit;
+    object-fit: cover;
+    max-width: 120px;
+    max-height: 120px;
+    cursor: pointer;
+}
+
+.profile__image:hover {
+    opacity: 0.4;
+  }

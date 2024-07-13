@@ -1,7 +1,9 @@
 import { deleteCardFromServer, addLike, removeLike } from './api.js';
 
+// Шаблон карточки
 const cardTemplate = document.querySelector('#card').content;
 
+// Функция удаления карточки
 function deleteCard(evt) {
   const cardElement = evt.target.closest('.card');
   const cardId = cardElement.dataset.id;
@@ -15,6 +17,7 @@ function deleteCard(evt) {
     });
 }
 
+// Функция переключения лайка
 function toggleLike(evt) {
   const likeButton = evt.target;
   const cardElement = likeButton.closest('.card');
@@ -43,6 +46,7 @@ function toggleLike(evt) {
   }
 }
 
+// Функция создания карточки
 function createCard(card, handleCardClick, userId) {
   const cardContent = cardTemplate.cloneNode(true);
   const cardImage = cardContent.querySelector('.card__image');
