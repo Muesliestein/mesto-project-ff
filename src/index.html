@@ -52,12 +52,16 @@
                     <input name="title" id="title" type="text" class="popup__input" minlength="2" maxlength="40"
                         placeholder="Имя" required
                         data-error="Минимальное количество символов: 2. Длина текста сейчас: 1 символ."
-                        pattern="^[a-zA-Zа-яА-ЯёЁ\s-]+$">
+                        data-error-missing="Вы пропустили это поле."
+                        data-error-pattern="Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы."
+                        pattern="^[a-zA-Zа-яА-ЯёЁ\s\-]+$">
                     <span id="title-error" class="popup__input-error"></span>
                     <input name="description" id="description" type="text" class="popup__input" minlength="2"
                         maxlength="200" placeholder="О себе" required
                         data-error="Минимальное количество символов: 2. Длина текста сейчас: 1 символ."
-                        pattern="^[a-zA-Zа-яА-ЯёЁ\s-]+$">
+                        data-error-missing="Вы пропустили это поле."
+                        data-error-pattern="Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы."
+                        pattern="^[a-zA-Zа-яА-ЯёЁ\s\-]+$">
                     <span id="description-error" class="popup__input-error"></span>
                     <button type="submit" class="popup__save popup__save_disabled">Сохранить</button>
                 </form>
@@ -72,10 +76,12 @@
                     <input name="name" id="name" type="text" class="popup__input" minlength="2" maxlength="30"
                         placeholder="Название" required
                         data-error="Минимальное количество символов: 2. Длина текста сейчас: 1 символ."
-                        pattern="^[a-zA-Zа-яА-ЯёЁ\s-]+$">
+                        data-error-missing="Вы пропустили это поле."
+                        data-error-pattern="Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы."
+                        pattern="^[a-zA-Zа-яА-ЯёЁ\s\-]+$">
                     <span id="name-error" class="popup__input-error"></span>
                     <input name="link" id="link" type="url" class="popup__input" placeholder="Ссылка на картинку"
-                        required data-error="Введите адрес сайта.">
+                        required data-error="Введите адрес сайта." data-error-missing="Вы пропустили это поле.">
                     <span id="link-error" class="popup__input-error"></span>
                     <button type="submit" id="buttonSave" class="popup__save popup__save_disabled">Создать</button>
                 </form>
@@ -88,7 +94,8 @@
                 <form class="popup__form popup__form-avatar" name="avatar_form" id="form_avatar" novalidate>
                     <h2 class="popup__title">Обновить аватар</h2>
                     <input name="avatar_link" id="avatar_link" type="url" class="popup__input"
-                        placeholder="Ссылка на картинку" required data-error="Введите адрес сайта.">
+                        placeholder="Ссылка на картинку" required data-error="Введите адрес сайта."
+                        data-error-missing="Вы пропустили это поле.">
                     <span id="avatar_link-error" class="popup__input-error"></span>
                     <button type="submit" id="avatar_save" class="popup__save popup__save_disabled">Сохранить</button>
                 </form>
