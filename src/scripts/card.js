@@ -53,6 +53,7 @@ function createCard(card, handleCardClick, userId) {
   const cardName = cardContent.querySelector('.card__name');
   const likeCountElement = cardContent.querySelector('.card__like_count');
   const deleteButton = cardContent.getElementById('card_delete');
+  const likeButton = cardContent.querySelector('.card__like');
 
   cardContent.querySelector('.card').dataset.id = card._id;
 
@@ -60,6 +61,11 @@ function createCard(card, handleCardClick, userId) {
   cardImage.alt = card.name;
   cardImage.src = card.link;
   likeCountElement.textContent = card.likes.length; // Отображение количества лайков
+
+  // Проверка, лайкнута ли карточка текущим пользователем
+  if (card.likes.some(like => like._id === userId)) {
+    likeButton.classList.add('card__like_active');
+  }
 
   if (card.owner._id === userId) {
     deleteButton.addEventListener('click', deleteCard);

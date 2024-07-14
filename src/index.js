@@ -2,7 +2,8 @@ import { createCard } from './scripts/card.js';
 import { openPopup, closePopup } from './scripts/modal.js';
 import { enableValidation, clearValidation, validationConfig } from './scripts/validation.js';
 import { getUserInfo, getInitialCards, updateUserInfo, addNewCard, updateUserAvatar } from './scripts/api.js';
-import './pages/index.css';
+import { renderLoading, handleSubmit } from './scripts/utils.js'; // Импортируем функции renderLoading и handleSubmit
+import './pages/index.css'; // Импортируем стили
 
 // Элементы DOM
 const elementsList = document.querySelector('.elements__list');
@@ -12,13 +13,12 @@ const popupImage = document.getElementById('popup-image');
 const popupProfile = document.getElementById('popup-profile');
 const popupCard = document.getElementById('popup-card');
 const popupAvatar = document.getElementById('popup-avatar');
-const formProfile = document.getElementById('form_profile');
-const formCard = document.getElementById('form_card');
-const formAvatar = document.getElementById('form_avatar');
+const formProfile = document.forms.profile_form;
+const formCard = document.forms.card_form;
+const formAvatar = document.forms.avatar_form;
 const buttonPopupProfile = document.querySelector('.profile__edit');
 const buttonPopupCard = document.querySelector('.profile__button');
 const buttonPopupAvatar = document.querySelector('.profile__avatar');
-const buttonPopupSave = document.getElementById('buttonSave');
 const nameInput = document.getElementById('title');
 const descriptionInput = document.getElementById('description');
 const inputName = document.getElementById('name');
@@ -30,22 +30,10 @@ const userAvatar = document.querySelector('.profile__image');
 
 let userId; // Переменная для хранения _id пользователя
 
-// Функция для изменения текста кнопки во время загрузки
-function renderLoading(isLoading, formElement, loadingText = 'Сохранение...') {
-  const submitButton = formElement.querySelector('.popup__save');
-  if (isLoading) {
-    submitButton.textContent = loadingText;
-  } else {
-    submitButton.textContent = formElement.id === 'form_card' ? 'Создать' : 'Сохранить';
-  }
-}
-
 // Открытие попапа добавления карточки
 buttonPopupCard.addEventListener('click', () => {
   formCard.reset(); // Сброс формы
   clearValidation(formCard, validationConfig); // Очистка ошибок валидации
-  buttonPopupSave.setAttribute('disabled', true);
-  buttonPopupSave.classList.add('popup__save_disabled');
   openPopup(popupCard);
 });
 
@@ -65,73 +53,36 @@ buttonPopupAvatar.addEventListener('click', () => {
 });
 
 // Обработчик отправки формы добавления карточки
-function submitCardForm(evt) {
-  evt.preventDefault(); // Предотвращение стандартного поведения формы
-  renderLoading(true, formCard, 'Создание...'); // Показ состояния загрузки
-  const name = inputName.value;
-  const link = inputLink.value;
-
-  addNewCard(name, link)
-    .then((cardData) => {
-      const newCard = createCard(cardData, handleCardClick, userId); // Создание новой карточки
-      prependCard(newCard); // Добавление карточки в начало списка
-      closePopup(popupCard); // Закрытие попапа
-      formCard.reset(); // Сброс формы
-    })
-    .catch((err) => {
-      console.error(`Ошибка: ${err}`);
-    })
-    .finally(() => {
-      renderLoading(false, formCard); // Убрать состояние загрузки
-    });
+function handleCardFormSubmit(evt) {
+  handleSubmit(() => addNewCard(inputName.value, inputLink.value).then((cardData) => {
+    const newCard = createCard(cardData, handleCardClick, userId); // Создание новой карточки
+    prependCard(newCard); // Добавление карточки в начало списка
+    closePopup(popupCard); // Закрытие попапа
+  }), evt, 'Создание...');
 }
 
-formCard.addEventListener('submit', submitCardForm); // Добавление обработчика отправки формы
+formCard.addEventListener('submit', handleCardFormSubmit); // Добавление обработчика отправки формы
 
 // Обработчик отправки формы редактирования профиля
-function submitFormProfile(evt) {
-  evt.preventDefault(); // Предотвращение стандартного поведения формы
-  renderLoading(true, formProfile); // Показ состояния загрузки
-  const name = nameInput.value;
-  const about = descriptionInput.value;
-
-  updateUserInfo(name, about)
-    .then((userData) => {
-      userName.textContent = userData.name; // Обновление имени пользователя
-      userJob.textContent = userData.about; // Обновление описания пользователя
-      closePopup(popupProfile); // Закрытие попапа
-    })
-    .catch((err) => {
-      console.error(`Ошибка: ${err}`);
-    })
-    .finally(() => {
-      renderLoading(false, formProfile); // Убрать состояние загрузки
-    });
+function handleProfileFormSubmit(evt) {
+  handleSubmit(() => updateUserInfo(nameInput.value, descriptionInput.value).then((userData) => {
+    userName.textContent = userData.name; 
+    userJob.textContent = userData.about; 
+    closePopup(popupProfile); 
+  }), evt);
 }
 
-formProfile.addEventListener('submit', submitFormProfile); // Добавление обработчика отправки формы
+formProfile.addEventListener('submit', handleProfileFormSubmit); // Добавление обработчика отправки формы
 
 // Обработчик отправки формы изменения аватара
-function submitFormAvatar(evt) {
-  evt.preventDefault(); // Предотвращение стандартного поведения формы
-  renderLoading(true, formAvatar); // Показ состояния загрузки
-  const avatarLink = avatarLinkInput.value;
-
-  updateUserAvatar(avatarLink)
-    .then((userData) => {
-      userAvatar.src = userData.avatar; // Обновление аватара пользователя
-      closePopup(popupAvatar); // Закрытие попапа
-      formAvatar.reset(); // Сброс формы
-    })
-    .catch((err) => {
-      console.error(`Ошибка: ${err}`);
-    })
-    .finally(() => {
-      renderLoading(false, formAvatar); // Убрать состояние загрузки
-    });
+function handleAvatarFormSubmit(evt) {
+  handleSubmit(() => updateUserAvatar(avatarLinkInput.value).then((userData) => {
+    userAvatar.src = userData.avatar; 
+    closePopup(popupAvatar); 
+  }), evt);
 }
 
-formAvatar.addEventListener('submit', submitFormAvatar); // Добавление обработчика отправки формы
+formAvatar.addEventListener('submit', handleAvatarFormSubmit); // Добавление обработчика отправки формы
 
 // Загрузка информации о пользователе и карточек с сервера
 Promise.all([getUserInfo(), getInitialCards()])
@@ -161,9 +112,9 @@ function renderCard(card) {
 // Обработчик клика по карточке
 function handleCardClick(card) {
   openPopup(popupImage); // Открытие попапа с изображением
-  imageCaption.textContent = card.name; // Установка описания изображения
-  imageOpen.src = card.link; // Установка ссылки на изображение
-  imageOpen.alt = card.name; // Установка атрибута alt изображения
+  imageCaption.textContent = card.name; 
+  imageOpen.src = card.link; 
+  imageOpen.alt = card.name; 
 }
 
 // Добавление карточки в начало списка

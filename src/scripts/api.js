@@ -6,7 +6,7 @@ const config = {
   }
 };
 
-// Функция для проверки ответа сервера
+// Проверка ответа от сервера
 const checkResponse = (res) => {
   if (res.ok) {
     return res.json();
@@ -52,7 +52,7 @@ export const addNewCard = (name, link) => {
   }).then(checkResponse);
 };
 
-// Удаление карточки с сервера
+// Удаление карточки
 export const deleteCardFromServer = (cardId) => {
   return fetch(`${config.baseUrl}/cards/${cardId}`, {
     method: 'DELETE',
@@ -60,7 +60,7 @@ export const deleteCardFromServer = (cardId) => {
   }).then(checkResponse);
 };
 
-// Добавление лайка карточке
+// Добавление лайка
 export const addLike = (cardId) => {
   return fetch(`${config.baseUrl}/cards/likes/${cardId}`, {
     method: 'PUT',
@@ -68,7 +68,7 @@ export const addLike = (cardId) => {
   }).then(checkResponse);
 };
 
-// Удаление лайка с карточки
+// Удаление лайка
 export const removeLike = (cardId) => {
   return fetch(`${config.baseUrl}/cards/likes/${cardId}`, {
     method: 'DELETE',
