@@ -66,9 +66,9 @@ formCard.addEventListener('submit', handleCardFormSubmit); // Добавлени
 // Обработчик отправки формы редактирования профиля
 function handleProfileFormSubmit(evt) {
   handleSubmit(() => updateUserInfo(nameInput.value, descriptionInput.value).then((userData) => {
-    userName.textContent = userData.name; 
-    userJob.textContent = userData.about; 
-    closePopup(popupProfile); 
+    userName.textContent = userData.name;
+    userJob.textContent = userData.about;
+    closePopup(popupProfile);
   }), evt);
 }
 
@@ -77,8 +77,8 @@ formProfile.addEventListener('submit', handleProfileFormSubmit); // Добавл
 // Обработчик отправки формы изменения аватара
 function handleAvatarFormSubmit(evt) {
   handleSubmit(() => updateUserAvatar(avatarLinkInput.value).then((userData) => {
-    userAvatar.src = userData.avatar; 
-    closePopup(popupAvatar); 
+    userAvatar.src = userData.avatar;
+    closePopup(popupAvatar);
   }), evt);
 }
 
@@ -112,9 +112,9 @@ function renderCard(card) {
 // Обработчик клика по карточке
 function handleCardClick(card) {
   openPopup(popupImage); // Открытие попапа с изображением
-  imageCaption.textContent = card.name; 
-  imageOpen.src = card.link; 
-  imageOpen.alt = card.name; 
+  imageCaption.textContent = card.name;
+  imageOpen.src = card.link;
+  imageOpen.alt = card.name;
 }
 
 // Добавление карточки в начало списка
